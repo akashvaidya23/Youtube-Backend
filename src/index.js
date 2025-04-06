@@ -1,12 +1,21 @@
-// require('dotenv').config({path:"/.env"});
-// import connectDB from "./db/index.js";
+const { app } = require("./app.js");
 const { connectDB } = require("./db/index.js");
+
 const mongoose = require("mongoose");
+const PORT = process.env.PORT || 8000;
 
-connectDB();
+connectDB().then(() => {
+    console.log("Connected to MongoDB");
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}).catch((err) => {
+    console.error("Error connecting to MongoDB", err);
+});
 
-
-
+app.get("/", (req, res) => {
+    res.send("Hello World");
+});
 
 /*
 FIRST APPROACH
