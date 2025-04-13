@@ -14,4 +14,7 @@ app.use(express.urlencoded({extended: true, limit: "20kb"}));
 app.use(express.static("public"));
 app.use(cookieParcer());
 
+// Import routes
+const userRouter = require("./routes/user.routes.js");
+app.use("/api/users/v1", userRouter)
 module.exports = { app };

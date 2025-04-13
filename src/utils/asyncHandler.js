@@ -11,8 +11,8 @@
 // };
 
 const asyncHandler = (fn) =>{
-    (req, resp, next) => {
-        Promise.resolve(fn(req, resp, next)).reject();
+    return (req, resp, next) => {
+        Promise.resolve(fn(req, resp, next)).catch((err) => next(err));
     }
 }
 
