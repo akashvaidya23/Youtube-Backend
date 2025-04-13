@@ -16,5 +16,5 @@ app.use(cookieParcer());
 
 // Import routes
 const userRouter = require("./routes/user.routes.js");
-app.use("/api/users/v1", userRouter)
+app.use("/api/users/", userRouter);
 module.exports = { app };
