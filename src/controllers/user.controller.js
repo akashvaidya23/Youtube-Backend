@@ -35,7 +35,6 @@ const registerUser = asyncHandler(async (req, res) => {
         // if(firstName == ""){
         //     throw new ApiError(400,"First Name is required");
         // }
-        console.log(req.files);
         if ([firstName, lastName, phone, email, password].some((field) => {
             return field.trim() == ""
         })) {
@@ -372,7 +371,7 @@ const getWatchHistory = asyncHandler(async (req, resp) => {
             }
         },
         {
-            $lookup:{
+            $lookup: {
                 from: "videos",
                 localField: "watchHistory",
                 foreignField: "_id",
@@ -394,9 +393,9 @@ const getWatchHistory = asyncHandler(async (req, resp) => {
                                 }
                             ]
                         }
-                    }, 
+                    },
                     {
-                        $addFields:{
+                        $addFields: {
                             owner: {
                                 $first: "$owner"
                             }
