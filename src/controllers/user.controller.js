@@ -84,6 +84,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
         let createdUser = await User.create(user);
 
+        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(createdUser._id);
+
         createdUser = await User.findById(createdUser._id).select(
             "-password -refreshToken"
         )
@@ -92,22 +94,20 @@ const registerUser = asyncHandler(async (req, res) => {
             throw new ApiError(500, "User registration failed");
         }
 
-        return res.status(201).json(
-            new ApiResponse(200, "User registered Successfully", createdUser)
-        )
-        // res.status(200).json({
-        //     user: createdUser,
-        //     success: true,
-        //     message: "User registered successfully",
-        // });
+        const options = {
+            httpOnly: true,
+            secure: true,
+        };
+
+        return res.status(200).
+            cookie("accessToken", accessToken, options).
+            cookie("refreshToken", refreshToken, options).
+            json(
+                new ApiResponse(200, "User registered Successfully", { createdUser, accessToken, refreshToken })
+            );
     } catch (err) {
         console.log(err);
         throw new ApiError(500, "User registration failed");
-        // res.status(500).json({
-        //     err,
-        //     success: false,
-        //     message: "User registration failed",
-        // });
     }
 });
 
@@ -119,7 +119,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     const user = await User.findOne({
-        $or: [{ email }, { username }]
+        $or: [{ email }]
     });
 
     if (!user) {
@@ -149,7 +149,7 @@ const loginUser = asyncHandler(async (req, res) => {
             new ApiResponse(200,
                 "User logged In Successfully",
                 {
-                    loggedInUser
+                    loggedInUser, accessToken, refreshToken
                 }
             )
         );
